@@ -27,11 +27,11 @@ void init(half *A, half *B, float *C, size_t m, size_t n, size_t k) {
 int main(int argc, char *argv[]) {
   size_t m_global, n_global, k_global;
   if (argc == 2) {
-    cout << "Matrix size: " << argv[1] << endl;
+    cout << "\nMatrix size: " << argv[1] << endl;
     m_global = n_global = k_global = atoi(argv[1]);
   } else {
     const size_t size = 4096;
-    cout << "Using default matrix size: " << size << endl;
+    cout << "\nUsing default matrix size: " << size << endl;
     m_global = n_global = k_global = size;
   }
 
@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
       n_global, cudaMemcpyHostToDevice);
   cudaDeviceSynchronize();
 
+  // create CUDA events for timing measurement
   cudaEvent_t start, stop;
   cudaEventCreate(&start);
   cudaEventCreate(&stop);
@@ -99,6 +100,7 @@ int main(int argc, char *argv[]) {
   cudaEventElapsedTime(&milliseconds, start, stop);
   double seconds = static_cast<double>(milliseconds) / 1000.;
   cout << "runtime: " << seconds << endl;
+  cout << "Tensor TFLOPS: " << (m_global * n_global * k_global) * 2.0 / seconds / 1e12 << endl;
 
   return 0;
 }
