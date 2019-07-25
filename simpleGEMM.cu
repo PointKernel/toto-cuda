@@ -102,5 +102,13 @@ int main(int argc, char *argv[]) {
   cout << "runtime: " << seconds << endl;
   cout << "Tensor TFLOPS: " << (m_global * n_global * k_global) * 2.0 / seconds / 1e12 << endl;
 
+  // free the allocated memory
+  free(A_h);
+  free(B_h);
+  free(C_h);
+  cudaFree(reinterpret_cast<void *>(A_d));
+  cudaFree(reinterpret_cast<void *>(B_d));
+  cudaFree(reinterpret_cast<void *>(C_d));
+
   return 0;
 }
