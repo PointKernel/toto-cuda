@@ -1,4 +1,10 @@
 *.o
 *.swp
 
+*.qdrep
+*.sqlite
+*.qdstrm
+*.nvvp
+
 simpleGEMM
+simpleOverhead
