@@ -11,16 +11,21 @@ int main() {
   cudaEventCreate(&start);
   cudaEventCreate(&stop);
 
-  for (int i = 0; i < N; i++) {
-    cudaEventRecord(start, 0);
-    emptyKernel<<<1, 1>>>();
-    cudaEventRecord(stop, 0);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&time, start, stop);
-    total = total + time;
+  for (int j = 1; j <= 4096; j *= 2) {
+    for (int k = 1; k <= 1024; k *= 2) {
+      for (int i = 0; i < N; i++) {
+        cudaEventRecord(start, 0);
+        emptyKernel<<<1, 1>>>();
+        cudaEventRecord(stop, 0);
+        cudaEventSynchronize(stop);
+        cudaEventElapsedTime(&time, start, stop);
+        total = total + time;
+      }
+      std::cout << "Kernel: " << j << "X" << k
+                << "\tlaunch overhead: " << total / N * 1000 << " us\n";
+      total = 0.f;
+    }
   }
-
-  std::cout << "Kernel launch overhead: " << total / N * 1000 << " us\n";
 
   total = 0.f;
 
@@ -35,7 +40,7 @@ int main() {
     total = total + time;
   }
 
-  std::cout << "Data transfer overhead: " << total / N * 1000 << " us\n";
+  std::cout << "\nData transfer overhead: " << total / N * 1000 << " us\n";
 
   return 0;
 }

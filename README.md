@@ -1,6 +1,6 @@
 # toto-cuda
 [![License:MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/l0icenses/MIT)
-[![Build Status](https://travis-ci.org/PointKernel/tensor-core-miniapp.svg?branch=master)](https://travis-ci.org/PointKernel/tensor-core-miniapp)
+[![Build Status](https://travis-ci.org/PointKernel/toto-cuda.svg?branch=master)](https://travis-ci.org/PointKernel/toto-cuda)
 
 Mini-apps for CUDA measurement
 
@@ -15,7 +15,7 @@ To measure Tensor Core FLOPs:
 ./simpleGEMM
 ```
 
-To measure overhead:
+To measure overheads:
 ```bash
 ./simpleOverhead
 ```
