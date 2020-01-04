@@ -81,13 +81,14 @@ int main(int argc, char *argv[]) {
 
   // dim3 gridDim;
   // dim3 blockDim;
-
-  cudaEventRecord(start);
-  checkCudaErrors(cublasGemmEx(
-      cublasHandle, CUBLAS_OP_N, CUBLAS_OP_N, m_global, n_global, k_global,
-      &alpha, A_d, CUDA_R_16F, m_global, B_d, CUDA_R_16F, k_global, &beta, C_d,
-      CUDA_R_32F, m_global, CUDA_R_32F, CUBLAS_GEMM_DFALT_TENSOR_OP));
-  cudaEventRecord(stop);
+  for(int i=0; i<10; i++) {
+    cudaEventRecord(start);
+    checkCudaErrors(cublasGemmEx(
+        cublasHandle, CUBLAS_OP_N, CUBLAS_OP_N, m_global, n_global, k_global,
+        &alpha, A_d, CUDA_R_16F, m_global, B_d, CUDA_R_16F, k_global, &beta, C_d,
+        CUDA_R_32F, m_global, CUDA_R_32F, CUBLAS_GEMM_DFALT_TENSOR_OP));
+    cudaEventRecord(stop);
+  }
 
   cudaMemcpy(reinterpret_cast<void *>(C_h), reinterpret_cast<void *>(C_d),
              m_global * n_global, cudaMemcpyDeviceToHost);

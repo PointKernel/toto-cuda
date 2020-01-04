@@ -27,8 +27,26 @@ l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum,\
 l1tex__data_pipe_lsu_wavefronts_mem_shared_op_st.sum,\
 lts__t_sectors_op_read.sum,\
 lts__t_sectors_op_write.sum,\
+lts__t_sectors_op_atom.sum,\
+lts__t_sectors_op_red.sum,\
 dram__sectors_read.sum,\
-dram__sectors_write.sum,\
-lts__t_sectors_aperture_sysmem_op_read.sum,\
-lts__t_sectors_aperture_sysmem_op_write.sum\
+dram__sectors_write.sum\
+  ./simpleGEMM
+
+
+srun nvprof -f --metrics \
+l2_read_transactions,\
+l2_write_transactions,\
+dram_write_transactions,\
+dram_read_transactions,\
+gld_transactions,\
+gst_transactions,\
+atomic_transactions,\
+local_load_transactions,\
+local_store_transactions,\
+shared_load_transactions,\
+shared_store_transactions,\
+flop_count_hp,\
+flop_count_sp,\
+flop_count_dp\
   ./simpleGEMM
