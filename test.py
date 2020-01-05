@@ -18,6 +18,9 @@ def import_nsight_metric(filename, cuda_dir='/usr/common/software/cuda/10.2.89/'
     
     #get timeline from csv
     profiledf = pd.read_csv(StringIO(stdout.decode("utf-8")),skiprows=0) #.dropna(how="all").rename(columns={"Kernel": "Name"})
+
+    for col in profiledf.columns:
+        print(col)
     
     #clean up
     del profiledf["Process ID"]
