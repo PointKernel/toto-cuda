@@ -30,6 +30,8 @@ def import_nsight_metric(filename, cuda_dir='/usr/common/software/cuda/10.2.89/'
     del profiledf["Context"]
     del profiledf["Stream"]
     del profiledf["Section Name"]
+
+    print(profiledf)
     
     profiledf = profiledf.groupby(["Kernel Name", "Metric Name"]).apply(lambda x: pd.Series([x["Metric Value"].count(),x["Metric Value"].sum()])).reset_index()
     profiledf.rename(columns={0: "Invocations", 1: "Metric Value", "Kernel Name": "Name"}, inplace=True)
@@ -38,6 +40,6 @@ def import_nsight_metric(filename, cuda_dir='/usr/common/software/cuda/10.2.89/'
     return profiledf
 
 
-filename = "res_test.nsight-cuprof-report"
+filename = "res_nsight.nsight-cuprof-report"
 
 print(import_nsight_metric(filename))
