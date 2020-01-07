@@ -40,6 +40,6 @@ def import_nsight_metric(filename, cuda_dir='/usr/common/software/cuda/10.2.89/'
     return profiledf
 
 
-filename = "res_nsight.nsight-cuprof-report"
+filename = "res_test.nsight-cuprof-report"
 
 print(import_nsight_metric(filename))
