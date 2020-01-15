@@ -6,5 +6,8 @@
 *.qdstrm
 *.nvvp
 
+*.png
+*.eps
+
 simpleGEMM
 simpleOverhead

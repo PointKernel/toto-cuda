@@ -32,17 +32,17 @@ def plot_data(file_prefix, plot_label, marker_tag, marker_label, df):
 
     print(df.columns)
 
-    df["FLOPs Avg"]      /= 1e9
-    df["L1 Bytes Avg"]   /= 1e9
-    df["L2 Bytes Avg"]   /= 1e9
-    df["DRAM Bytes Avg"] /= 1e9
+    df[['FLOPs Avg', 'L1 Bytes Avg', 'L2 Bytes Avg', 'DRAM Bytes Avg']] /= 1e9
     
     #fp32 data
     df_fp32         = df[ df["Precision"]=="FP32" ]
+    print(df_fp32[['L1 Bytes Avg', 'L2 Bytes Avg', 'DRAM Bytes Avg', 'FLOPs Avg', 'FP32 FLOPs Avg',
+        'FP16 FLOPs Avg', 'CUDA Time Avg', 'TC Time Avg']])
     BYTES_L1_fp32   = list(df_fp32["L1 Bytes Avg"])
     BYTES_L2_fp32   = list(df_fp32["L2 Bytes Avg"])
     BYTES_DRAM_fp32 = list(df_fp32["DRAM Bytes Avg"])
     FLOPS_fp32      = list(df_fp32["FLOPs Avg"])
+    print(FLOPS_fp32)
     TIME_fp32       = list(df_fp32["CUDA Time Avg"])
     labels_fp32 = ["FP32 "+marker_label+" "+str(x) for x in list(df_fp32[marker_tag])]
 
@@ -63,6 +63,9 @@ def plot_data(file_prefix, plot_label, marker_tag, marker_label, df):
     ax.set_yscale('log')
     ax.set_xlabel('GBytes')
     ax.set_ylabel('GFLOPs')
+
+    plt.grid(True, which="major", ls="--", lw=1)
+    plt.grid(True, which="minor", ls="--", lw=0.5)
 
     xmin = min(min(BYTES_L1_fp16), min(BYTES_L1_fp32), min(BYTES_L2_fp16), min(BYTES_L2_fp32), min(BYTES_DRAM_fp16), min(BYTES_DRAM_fp32))
     xmax = max(max(BYTES_L1_fp16), max(BYTES_L1_fp32), max(BYTES_L2_fp16), max(BYTES_L2_fp32), max(BYTES_DRAM_fp16), max(BYTES_DRAM_fp32))
@@ -98,7 +101,7 @@ def plot_data(file_prefix, plot_label, marker_tag, marker_label, df):
     for element in oh_comproofs:
         ax.plot([0, oh_memroofs[-1]], [element, element], c='k', linestyle='dashed')
 
-    xmin = pow(10, math.log(oh_memroofs[0])//math.log(10) - 1)
+    xmin = pow(10, math.log(oh_memroofs[0])//math.log(10))
     ymin = pow(10, math.log(oh_comproofs[0])//math.log(10))
 
     #some handles
@@ -126,15 +129,15 @@ def plot_data(file_prefix, plot_label, marker_tag, marker_label, df):
     ax.annotate(str('%.2f' % TIME_fp32[i]), (BYTES_DRAM_fp32[i], FLOPS_fp32[i]), color='k', horizontalalignment='right')
 
     flop_ceilings = []
-    for element in smemroofs:
+    for element in scomproofs:
         flop_ceilings.append(TIME_fp32[i] * element)
 
     byte_ceilings = []
-    for element in scomproofs:
+    for element in smemroofs:
         byte_ceilings.append(TIME_fp32[i] * element)
 
-    print(byte_ceilings)
     print(flop_ceilings)
+    print(byte_ceilings)
 
     # plot memory ceilings
     for i, e in enumerate(byte_ceilings):
@@ -153,8 +156,8 @@ def plot_data(file_prefix, plot_label, marker_tag, marker_label, df):
     ax.set_ylim(ymin, ymax)
 
     # plot 
-    for i in range(len(oh_memroofs)):
-        ax.plot([oh_memroofs[i], byte_ceilings[i]], [oh_comproofs[-1], flop_ceilings[-1]], c=colors[i])
+    for k in range(len(oh_memroofs)):
+        ax.plot([oh_memroofs[k], byte_ceilings[k]], [oh_comproofs[-1], flop_ceilings[-1]], c=colors[k])
 
     #FP16
     #for i in range(0,len(AI_L1_fp16)):
@@ -217,7 +220,7 @@ for idx,feature in enumerate(features):
         continue
     
     #label
-    plot_label = 'V100, tf.nn.conv2d, '+feature[0].split("-")[0]+', '+feature[1]+', '+feature[2]+', '+str(feature[3])+', '+feature[4]
+    plot_label = 'hierarchical_'+feature[4]
     plot_file = os.path.join(directory, plot_label.replace(", ","_"))
     plot_label = None
     plot_data(plot_file, plot_label, "Batch Size", "batch size", selectdf)
