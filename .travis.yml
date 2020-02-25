@@ -35,6 +35,7 @@ before_install:
   - PATH=${CUDA_HOME}/bin:${PATH}
   
 install:
-  - make
+  - (cd benchmark && make && make clean)
+  - (cd conv2d && make && make clean)
 
 script: true
