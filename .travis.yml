@@ -16,9 +16,9 @@ matrix:
     #  dist: xenial
     - name: CUDA 10
       env:
-      - CUDA=10.1.105-1
-      - CUDA_APT=10-1
-      - CUDA_SHORT=10.1
+      - CUDA=10.2.89-1
+      - CUDA_APT=10-2
+      - CUDA_SHORT=10.2
       - UBUNTU_VERSION=ubuntu1604
       dist: xenial
 
@@ -30,9 +30,15 @@ before_install:
   - sudo apt-key add 7fa2af80.pub
   - sudo apt-get update
   - sudo apt-get install cuda
-  - CUDA_HOME=/usr/local/cuda-${CUDA_SHORT}
-  - LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
-  - PATH=${CUDA_HOME}/bin:${PATH}
+  - ls /usr/local/cuda*
+  - export CUDA_HOME="/usr/local/cuda"
+  - export LD_LIBRARY_PATH="${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}"
+  - export PATH="${CUDA_HOME}/bin:${PATH}"
+  - echo "PATH"
+  - echo $PATH
+  - echo "LD_LIBRARY_PATH"
+  - echo $LD_LIBRARY_PATH
+  - env | grep CUDA
   
 install:
   - (cd benchmark && make && make clean)
