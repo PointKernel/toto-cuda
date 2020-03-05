@@ -16,9 +16,9 @@ matrix:
     #  dist: xenial
     - name: CUDA 10
       env:
-      - CUDA=10.1.105-1
-      - CUDA_APT=10-1
-      - CUDA_SHORT=10.1
+      - CUDA=10.2.89-1
+      - CUDA_APT=10-2
+      - CUDA_SHORT=10.2
       - UBUNTU_VERSION=ubuntu1604
       dist: xenial
 
