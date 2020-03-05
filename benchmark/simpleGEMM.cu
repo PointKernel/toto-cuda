@@ -5,12 +5,6 @@
 #include <cuda_fp16.h>
 #include <helper_cuda.h>
 
-#define M 16
-#define N 16
-#define K 16
-
-#define GLOBAL_MAX 16384
-
 using namespace std;
 
 void init(half *A, half *B, float *C, size_t m, size_t n, size_t k) {
@@ -81,12 +75,12 @@ int main(int argc, char *argv[]) {
 
   // dim3 gridDim;
   // dim3 blockDim;
-  for(int i=0; i<10; i++) {
+  for (int i = 0; i < 10; i++) {
     cudaEventRecord(start);
     checkCudaErrors(cublasGemmEx(
         cublasHandle, CUBLAS_OP_N, CUBLAS_OP_N, m_global, n_global, k_global,
-        &alpha, A_d, CUDA_R_16F, m_global, B_d, CUDA_R_16F, k_global, &beta, C_d,
-        CUDA_R_32F, m_global, CUDA_R_32F, CUBLAS_GEMM_DFALT_TENSOR_OP));
+        &alpha, A_d, CUDA_R_16F, m_global, B_d, CUDA_R_16F, k_global, &beta,
+        C_d, CUDA_R_32F, m_global, CUDA_R_32F, CUBLAS_GEMM_DFALT_TENSOR_OP));
     cudaEventRecord(stop);
   }
 
