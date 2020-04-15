@@ -1,14 +1,26 @@
+# Compiled object files
 *.o
+
+# Vim swap files
 *.swp
 
+# Profiling files
 *.qdrep
 *.sqlite
 *.qdstrm
 *.nvvp
 
-*.png
+# Image files
 *.eps
+*.png
 
+# Python bytecode
+**/__pycache__/
+
+# Notebook checkpoints
+**/.ipynb_checkpoints/
+
+# Executables
 simpleGEMM
 simpleOverhead
 simpleOverlap
