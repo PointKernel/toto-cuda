@@ -42,6 +42,6 @@ before_install:
   
 install:
   - (cd benchmark && make && make clean)
-  - (cd conv2d && make && make clean)
+  - (cd test && make && make clean)
 
 script: true
