@@ -1,7 +1,7 @@
 #include <iostream>
 
-const long int IMAGE_SIZE = 4096;
-const int BLOCK_SIZE = 16;
+const long int IMAGE_SIZE = 8192;
+const int BLOCK_SIZE = 32;
 
 const float alpha = 2.f;
 const float beta = 2.f;
@@ -49,8 +49,8 @@ int main() {
   cudaMalloc(&B_d, data_size);
   cudaMalloc(&C_d, data_size);
 
-  const int grid_size = IMAGE_SIZE / BLOCK_SIZE;
-  dim3 grid(grid_size, grid_size);  // 128 * 128
+  const int grid_size = IMAGE_SIZE / BLOCK_SIZE;  // 8192 / 32 = 256
+  dim3 grid(grid_size, grid_size);  // 256 * 256
   dim3 block(BLOCK_SIZE, BLOCK_SIZE); // 32 x 32 = 1024
 
 
@@ -75,7 +75,7 @@ int main() {
   cudaMemcpy(C, C_d, data_size, cudaMemcpyDeviceToHost);
   cudaEventSynchronize(stop);
 
-  // runtime and FLOP rate
+  // print runtime and FLOP rate info
   float milliseconds = 0.f;
   cudaEventElapsedTime(&milliseconds, start, stop);
   double seconds = static_cast<double>(milliseconds) / 1000.;
@@ -83,30 +83,20 @@ int main() {
   std::cout << "Performance (TFLOPS/s): "
        << (IMAGE_SIZE * IMAGE_SIZE * IMAGE_SIZE) * 2.0 / seconds / 1e12 << "\n\n";
 
-  for (int i = 0; i < IMAGE_SIZE * IMAGE_SIZE; i ++) {
-    A[i] = 1.f;
-    B[i] = 1.f;
-    C[i] = 1.f;
-  }
-
-  cudaEvent_t start1, stop1;
-  cudaEventCreate(&start1);
-  cudaEventCreate(&stop1);
-
   cudaMemcpy(A_d, A, data_size, cudaMemcpyHostToDevice);
   cudaMemcpy(B_d, B, data_size, cudaMemcpyHostToDevice);
   cudaMemcpy(C_d, C, data_size, cudaMemcpyHostToDevice);
 
-  cudaEventRecord(start1);
+  cudaEventRecord(start);
   sgemmSHM<<<grid, block>>>(A_d, B_d, C_d, IMAGE_SIZE);
-  cudaEventRecord(stop1);
+  cudaEventRecord(stop);
 
   cudaMemcpy(C, C_d, data_size, cudaMemcpyDeviceToHost);
-  cudaEventSynchronize(stop1);
+  cudaEventSynchronize(stop);
 
-  // runtime and FLOP rate
+  // print runtime and FLOP rate
   milliseconds = 0.f;
-  cudaEventElapsedTime(&milliseconds, start1, stop1);
+  cudaEventElapsedTime(&milliseconds, start, stop);
   seconds = static_cast<double>(milliseconds) / 1000.;
   std::cout << "sgemmSHM runtime: " << seconds << "\n";
   std::cout << "Performance (TFLOPS/s): "
