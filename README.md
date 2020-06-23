@@ -22,6 +22,7 @@ Simple pycuda kernels with Nsight profiling script
 
 ## test
 1. [ ] `conv2d`: 2D convolution kernel using shared memory
-2. [ ] `simpleOverlap`: code example using CUDA streams
-3. [ ] `simpleShuffle`: simple use case of shuffle operations
-4. [ ] `thrustVector`: use thrust vector with CUDA
+2. [ ] `sgemm`: performance improvement via shared memory for GEMM
+3. [ ] `simpleOverlap`: code example using CUDA streams
+4. [ ] `simpleShuffle`: simple use case of shuffle operations
+5. [ ] `thrustVector`: use thrust vector with CUDA
