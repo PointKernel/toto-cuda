@@ -3,8 +3,7 @@
 const int image_size = 4096;
 const int filter_size = 3;
 
-__global__
-void conv2d(int *A, int *B, int *C, int N, int n) {
+__global__ void conv2d(int *A, int *B, int *C, int N, int n) {
   int row = blockIdx.y * blockDim.y + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -39,7 +38,7 @@ int main() {
   cudaMallocHost(&B, data_size);
   cudaMallocHost(&C, kernel_size);
 
-  for (int i = 0; i < image_size * image_size; i ++)
+  for (int i = 0; i < image_size * image_size; i++)
     A[i] = 1;
   memset(B, 0, data_size);
   for (int i = 0; i < filter_size * filter_size; i++)
@@ -72,12 +71,12 @@ int main() {
   float milliseconds = 0;
   cudaEventElapsedTime(&milliseconds, start, stop);
 
-  for(int i = 0; i < 10; i++) {
-    for(int j = 0; j < 10; j++)
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++)
       std::cout << B[i * image_size + j] << " ";
     std::cout << "\n";
   }
-  std::cout << "Kernel run time: " << milliseconds << " ms\n"; 
+  std::cout << "Kernel run time: " << milliseconds << " ms\n";
 
   cudaFree(A_d);
   cudaFree(B_d);

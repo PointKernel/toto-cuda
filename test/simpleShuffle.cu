@@ -49,8 +49,8 @@ int main() {
       cudaMalloc(reinterpret_cast<void **>(&a_d), sizeof(uint32_t) * 32 * 6));
 
   shfl_up_kernel<<<32, 32>>>(a_d);
-  cudaMemcpy(reinterpret_cast<void *>(a_h),
-             reinterpret_cast<void *>(a_d), 32 * 6, cudaMemcpyDeviceToHost);
+  cudaMemcpy(reinterpret_cast<void *>(a_h), reinterpret_cast<void *>(a_d),
+             32 * 6, cudaMemcpyDeviceToHost);
   cudaDeviceSynchronize();
 
   for (int i = 0; i < 6; i++) {
