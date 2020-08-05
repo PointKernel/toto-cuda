@@ -1,5 +1,8 @@
 # Roofline Analysis with Nsight
 
+## Prerequisite
+#### `CUDA 10.2 or plus`
+
 ## Collect Roofline Data
 
 ### Run Nsight profiling on Cori
