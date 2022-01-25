@@ -13,7 +13,7 @@ repos:
                 # entry: clang-format
                 # language: system
                 files: \.(cu|cuh|h|hpp|cpp|inl)$
-                 'types_or': [file]
+                'types_or': [file]
                 args: ['-fallback-style=none', '-style=file', '-i']
 
 default_language_version:
