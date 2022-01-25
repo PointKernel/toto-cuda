@@ -4,25 +4,27 @@
 
 using namespace std;
 
-__global__ void kernel(float *a, int offset) {
-  int i = offset + threadIdx.x + blockIdx.x * blockDim.x;
+__global__ void kernel(float* a, int offset)
+{
+  int i   = offset + threadIdx.x + blockIdx.x * blockDim.x;
   float x = (float)i;
   float s = sinf(x);
   float c = cosf(x);
-  a[i] = a[i] + sqrtf(s * s + c * c);
+  a[i]    = a[i] + sqrtf(s * s + c * c);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
   const int blockSize = 256, nStreams = 4;
-  const int n = 1024;
-  const int streamSize = n / nStreams;
+  const int n           = 1024;
+  const int streamSize  = n / nStreams;
   const int streamBytes = streamSize * sizeof(float);
-  const int bytes = n * sizeof(float);
+  const int bytes       = n * sizeof(float);
 
   // allocate pinned host memory and device memory
   float *a, *d_a;
-  checkCudaErrors(cudaMallocHost((void **)&a, bytes)); // host pinned
-  checkCudaErrors(cudaMalloc((void **)&d_a, bytes));   // device
+  checkCudaErrors(cudaMallocHost((void**)&a, bytes));  // host pinned
+  checkCudaErrors(cudaMalloc((void**)&d_a, bytes));    // device
 
   // create events and streams
   cudaEvent_t start, stop;
@@ -38,11 +40,11 @@ int main(int argc, char **argv) {
   checkCudaErrors(cudaEventRecord(start));
   for (int i = 0; i < nStreams; ++i) {
     int offset = i * streamSize;
-    checkCudaErrors(cudaMemcpyAsync(&d_a[offset], &a[offset], streamBytes,
-                                    cudaMemcpyHostToDevice, stream[i]));
+    checkCudaErrors(
+      cudaMemcpyAsync(&d_a[offset], &a[offset], streamBytes, cudaMemcpyHostToDevice, stream[i]));
     kernel<<<streamSize / blockSize, blockSize, 0, stream[i]>>>(d_a, offset);
-    checkCudaErrors(cudaMemcpyAsync(&a[offset], &d_a[offset], streamBytes,
-                                    cudaMemcpyDeviceToHost, stream[i]));
+    checkCudaErrors(
+      cudaMemcpyAsync(&a[offset], &d_a[offset], streamBytes, cudaMemcpyDeviceToHost, stream[i]));
   }
   checkCudaErrors(cudaEventRecord(stop));
   checkCudaErrors(cudaEventSynchronize(stop));

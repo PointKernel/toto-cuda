@@ -3,32 +3,36 @@
 #include <string>
 
 const long int GLOBAL_SIZE = 1024;
-const int TILE_DIM = 32;
-const int BLOCK_ROWS = 8;
-const int NUM_ITERS = 100;
+const int TILE_DIM         = 32;
+const int BLOCK_ROWS       = 8;
+const int NUM_ITERS        = 100;
 
-__global__ void copy(float *A, float *B) {
+__global__ void copy(float* A, float* B)
+{
   int row = blockIdx.y * blockDim.x + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
   for (int i = 0; i < blockDim.x; i += blockDim.y)
     B[(row + i) * GLOBAL_SIZE + col] = A[(row + i) * GLOBAL_SIZE + col];
 }
 
-__global__ void transposeNaive(float *A, float *B) {
+__global__ void transposeNaive(float* A, float* B)
+{
   int row = blockIdx.y * blockDim.x + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
   for (int i = 0; i < blockDim.x; i += blockDim.y)
     B[col * GLOBAL_SIZE + row + i] = A[(row + i) * GLOBAL_SIZE + col];
 }
 
-__global__ void transposeCoalescedOutput(float *A, float *B) {
+__global__ void transposeCoalescedOutput(float* A, float* B)
+{
   int row = blockIdx.y * blockDim.x + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
   for (int i = 0; i < blockDim.x; i += blockDim.y)
     B[(row + i) * GLOBAL_SIZE + col] = A[col * GLOBAL_SIZE + row + i];
 }
 
-__global__ void transposeCoalescedSHM(float *A, float *B) {
+__global__ void transposeCoalescedSHM(float* A, float* B)
+{
   int row = blockIdx.y * blockDim.x + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
   __shared__ float tile[TILE_DIM][TILE_DIM];
@@ -42,7 +46,8 @@ __global__ void transposeCoalescedSHM(float *A, float *B) {
     B[(row + i) * GLOBAL_SIZE + col] = tile[threadIdx.x][threadIdx.y + i];
 }
 
-__global__ void transposeCoalescedOptimal(float *A, float *B) {
+__global__ void transposeCoalescedOptimal(float* A, float* B)
+{
   int row = blockIdx.y * blockDim.x + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
   __shared__ float tile[TILE_DIM][TILE_DIM + 1];
@@ -56,12 +61,14 @@ __global__ void transposeCoalescedOptimal(float *A, float *B) {
     B[(row + i) * GLOBAL_SIZE + col] = tile[threadIdx.x][threadIdx.y + i];
 }
 
-void initArray(float *A) {
+void initArray(float* A)
+{
   for (int i = 0; i < GLOBAL_SIZE * GLOBAL_SIZE; i++)
     A[i] = static_cast<float>(i);
 }
 
-void printtArray(float *A) {
+void printtArray(float* A)
+{
   for (int i = 0; i < GLOBAL_SIZE; i++) {
     for (int j = 0; j < GLOBAL_SIZE; j++)
       std::cout << std::left << std::setw(10) << A[i * GLOBAL_SIZE + j];
@@ -69,16 +76,17 @@ void printtArray(float *A) {
   }
 }
 
-void printSummary(std::string &s, cudaEvent_t &start, cudaEvent_t &stop) {
+void printSummary(std::string& s, cudaEvent_t& start, cudaEvent_t& stop)
+{
   float milliseconds = 0.f;
   cudaEventElapsedTime(&milliseconds, start, stop);
   std::cout << std::left << std::setw(30) << s;
-  std::cout << 2 * GLOBAL_SIZE * GLOBAL_SIZE * sizeof(float) * NUM_ITERS /
-                   (milliseconds * 1e6);
+  std::cout << 2 * GLOBAL_SIZE * GLOBAL_SIZE * sizeof(float) * NUM_ITERS / (milliseconds * 1e6);
   std::cout << "\n";
 }
 
-int main() {
+int main()
+{
   float *A, *A_d, *B, *B_d;
   const int data_size = GLOBAL_SIZE * GLOBAL_SIZE * sizeof(float);
 
@@ -87,9 +95,9 @@ int main() {
   cudaMalloc(&A_d, data_size);
   cudaMalloc(&B_d, data_size);
 
-  const int grid_size = GLOBAL_SIZE / TILE_DIM; // 1024 / 32 = 32
-  dim3 grid(grid_size, grid_size);              // 32 * 32
-  dim3 block(TILE_DIM, BLOCK_ROWS);             // 32 x 8 = 256
+  const int grid_size = GLOBAL_SIZE / TILE_DIM;  // 1024 / 32 = 32
+  dim3 grid(grid_size, grid_size);               // 32 * 32
+  dim3 block(TILE_DIM, BLOCK_ROWS);              // 32 x 8 = 256
 
   cudaEvent_t start, stop;
   cudaEventCreate(&start);
