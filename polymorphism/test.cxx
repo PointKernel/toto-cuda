@@ -9,35 +9,34 @@
 // It is no longer needed in an OpenMP-5.0 compliant compiler.
 #pragma omp declare target
 class Surface {
-public:
+ public:
   virtual double sag(double x, double y) = 0;
   virtual ~Surface() {}
 };
 
 class S1 : public Surface {
-public:
+ public:
   double sag(double x, double y) { return x + y; }
 };
 
 class S2 : public Surface {
-public:
+ public:
   double sag(double x, double y) { return x * y; }
 };
 
 class Sum : public Surface {
-public:
-  double sag(double x, double y) {
+ public:
+  double sag(double x, double y)
+  {
     double result = 0.0;
-    for (auto &surface : _surfaces) {
+    for (auto& surface : _surfaces) {
       result += surface->sag(x, y);
     }
     return result;
   }
-  void setSurface(int i, Surface *sptr) {
-    _surfaces[i] = sptr;
-  }
+  void setSurface(int i, Surface* sptr) { _surfaces[i] = sptr; }
 
-private:
+ private:
   Surface* _surfaces[2];
 };
 #pragma omp end declare target
@@ -45,24 +44,25 @@ private:
 // Create a pointer to the Base and Derived3 object on the device
 // This can then be used in multiple target regions
 #pragma omp declare target
-S1 *d_s1ptr;
-S2 *d_s2ptr;
-Sum *d_sumptr;
+S1* d_s1ptr;
+S2* d_s2ptr;
+Sum* d_sumptr;
 #pragma omp end declare target
 
-int main() {
+int main()
+{
   S1 s1;
   S2 s2;
   auto s1ptr = std::make_shared<S1>(s1);
   auto s2ptr = std::make_shared<S2>(s2);
   std::vector<std::shared_ptr<Surface>> surfaces({s1ptr, s2ptr});
   Sum sum;
-  sum.setSurface(0, static_cast<Surface *>(s1ptr.get()));
-  sum.setSurface(1, static_cast<Surface *>(s2ptr.get()));
+  sum.setSurface(0, static_cast<Surface*>(s1ptr.get()));
+  sum.setSurface(1, static_cast<Surface*>(s2ptr.get()));
 #pragma omp target
   {
-    d_s1ptr = new S1;
-    d_s2ptr = new S2;
+    d_s1ptr  = new S1;
+    d_s2ptr  = new S2;
     d_sumptr = new Sum;
     d_sumptr->setSurface(0, d_s1ptr);
     d_sumptr->setSurface(1, d_s2ptr);
