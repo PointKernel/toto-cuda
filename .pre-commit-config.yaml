@@ -12,7 +12,7 @@ repos:
                 # description: Format files with ClangFormat.
                 # entry: clang-format
                 # language: system
-                # files: \.(cu|cuh|h|hpp|cpp|inl)$
+                files: \.(cu|cuh|h|hpp|cpp|inl)$
                 # 'types_or': [file]
                 # args: ['-fallback-style=none', '-style=file', '-i']
 
