@@ -13,8 +13,8 @@ repos:
                 # entry: clang-format
                 # language: system
                 files: \.(cu|cuh|h|hpp|cpp|inl)$
-                # 'types_or': [file]
-                # args: ['-fallback-style=none', '-style=file', '-i']
+                 'types_or': [file]
+                args: ['-fallback-style=none', '-style=file', '-i']
 
 default_language_version:
       python: python3
