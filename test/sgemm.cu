@@ -1,12 +1,13 @@
 #include <iostream>
 
 const long int IMAGE_SIZE = 8192;
-const int BLOCK_SIZE = 32;
+const int BLOCK_SIZE      = 32;
 
 const float alpha = 2.f;
-const float beta = 2.f;
+const float beta  = 2.f;
 
-__global__ void sgemmNaive(float *A, float *B, float *C, int N) {
+__global__ void sgemmNaive(float* A, float* B, float* C, int N)
+{
   int row = blockIdx.y * blockDim.y + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -16,7 +17,8 @@ __global__ void sgemmNaive(float *A, float *B, float *C, int N) {
   C[row * N + col] = alpha * val + beta * C[row * N + col];
 }
 
-__global__ void sgemmSHM(float *A, float *B, float *C, int N) {
+__global__ void sgemmSHM(float* A, float* B, float* C, int N)
+{
   int row = blockIdx.y * blockDim.y + threadIdx.y;
   int col = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -36,7 +38,8 @@ __global__ void sgemmSHM(float *A, float *B, float *C, int N) {
   C[row * N + col] = alpha * val + beta * C[row * N + col];
 }
 
-int main() {
+int main()
+{
   float *A, *A_d, *B, *B_d, *C, *C_d;
   const int data_size = IMAGE_SIZE * IMAGE_SIZE * sizeof(float);
 
@@ -47,9 +50,9 @@ int main() {
   cudaMalloc(&B_d, data_size);
   cudaMalloc(&C_d, data_size);
 
-  const int grid_size = IMAGE_SIZE / BLOCK_SIZE; // 8192 / 32 = 256
-  dim3 grid(grid_size, grid_size);               // 256 * 256
-  dim3 block(BLOCK_SIZE, BLOCK_SIZE);            // 32 x 32 = 1024
+  const int grid_size = IMAGE_SIZE / BLOCK_SIZE;  // 8192 / 32 = 256
+  dim3 grid(grid_size, grid_size);                // 256 * 256
+  dim3 block(BLOCK_SIZE, BLOCK_SIZE);             // 32 x 32 = 1024
 
   for (int i = 0; i < IMAGE_SIZE * IMAGE_SIZE; i++) {
     A[i] = 1.f;
@@ -78,8 +81,7 @@ int main() {
   double seconds = static_cast<double>(milliseconds) / 1000.;
   std::cout << "sgemmNaive runtime: " << seconds << "\n";
   std::cout << "Performance (TFLOPS/s): "
-            << (IMAGE_SIZE * IMAGE_SIZE * IMAGE_SIZE) * 2.0 / seconds / 1e12
-            << "\n\n";
+            << (IMAGE_SIZE * IMAGE_SIZE * IMAGE_SIZE) * 2.0 / seconds / 1e12 << "\n\n";
 
   cudaMemcpy(A_d, A, data_size, cudaMemcpyHostToDevice);
   cudaMemcpy(B_d, B, data_size, cudaMemcpyHostToDevice);
@@ -98,8 +100,7 @@ int main() {
   seconds = static_cast<double>(milliseconds) / 1000.;
   std::cout << "sgemmSHM runtime: " << seconds << "\n";
   std::cout << "Performance (TFLOPS/s): "
-            << (IMAGE_SIZE * IMAGE_SIZE * IMAGE_SIZE) * 2.0 / seconds / 1e12
-            << "\n\n";
+            << (IMAGE_SIZE * IMAGE_SIZE * IMAGE_SIZE) * 2.0 / seconds / 1e12 << "\n\n";
 
   cudaFree(A_d);
   cudaFree(B_d);

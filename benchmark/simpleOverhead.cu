@@ -3,7 +3,8 @@
 
 __global__ void emptyKernel() {}
 
-int main() {
+int main()
+{
   const int N = 100000;
   float time, total = 0.f;
 
@@ -21,16 +22,16 @@ int main() {
         cudaEventElapsedTime(&time, start, stop);
         total = total + time;
       }
-      std::cout << "Kernel: " << j << "X" << k
-                << "\tlaunch overhead: " << total / N * 1000 << " us\n";
+      std::cout << "Kernel: " << j << "X" << k << "\tlaunch overhead: " << total / N * 1000
+                << " us\n";
       total = 0.f;
     }
   }
 
   total = 0.f;
 
-  void *dst = nullptr;
-  void *src = nullptr;
+  void* dst = nullptr;
+  void* src = nullptr;
   for (int i = 0; i < N; i++) {
     cudaEventRecord(start, 0);
     checkCudaErrors(cudaMemcpy(dst, src, 0, cudaMemcpyDefault));
