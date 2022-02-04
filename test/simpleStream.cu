@@ -1,6 +1,7 @@
 #include <iostream>
 
-int main() {
+int main()
+{
   cudaStream_t stream;
 
   cudaStreamCreate(&stream);
