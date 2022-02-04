@@ -9,5 +9,7 @@ int main() {
   std::cout << cudaStreamDestroy(stream) << "\n";
   std::cout << cudaStreamDestroy(stream) << "\n";
 
+  std::cout << cudaStreamDestroy(cudaStreamDefault) << "\n";
+
   return 0;
 }
