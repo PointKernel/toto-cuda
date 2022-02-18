@@ -80,9 +80,12 @@ int main()
 
   std::cout << res << "\n";
 
-  std::cout << std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>::rep;
-  std::cout << std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>::rep;
-  std::cout << std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>::rep;
+  std::cout
+    << std::chrono::time_point<std::chrono::system_clock, std::chrono::seconds>::period::den;
+  std::cout
+    << std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>::period::den;
+  std::cout
+    << std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>::period::den;
 
   return 0;
 }
